@@ -1,5 +1,13 @@
-
-// MFC_ImageFuseDlg.cpp : ÊµÏÖÎÄ¼ş
+//--------------------------------------ã€ç¨‹åºè¯´æ˜ã€‘-------------------------------------------
+//		ç¨‹åºè¯´æ˜ï¼šå¸¸è§çš„å›¾åƒèåˆç®—æ³•
+//		ç¨‹åºæè¿°ï¼šå¸¸è§çš„å›¾åƒèåˆç®—æ³•
+//		å¼€å‘æµ‹è¯•æ‰€ç”¨IDEç‰ˆæœ¬ï¼šVisual Studio 2013
+//		å¼€å‘æµ‹è¯•æ‰€ç”¨OpenCVç‰ˆæœ¬ï¼š	2.4.13
+//		æ“ä½œç³»ç»Ÿï¼šWindows 10
+//		æµ‹è¯•å›¾åƒï¼šçº¢å¤–å›¾åƒå’Œå¯è§å…‰å›¾åƒï¼ˆå¾®å…‰å›¾åƒï¼‰ 
+//		2017å¹´8æœˆ Created by @èƒ¡ä¿æ— hu_nobuone@163.com
+//------------------------------------------------------------------------------------------------
+// MFC_ImageFuseDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -14,15 +22,15 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-//static ImageFuse   imagefuse;				//ÊµÀı»¯Ò»¸ö¶ÔÏó
-//ÏÔÊ¾¿ØÖÆÌ¨
+//static ImageFuse   imagefuse;				//å®ä¾‹åŒ–ä¸€ä¸ªå¯¹è±¡
+//æ˜¾ç¤ºæ§åˆ¶å°
 void InitConsole()
 {
 	int nRet = 0;
 	FILE* fp;
 	AllocConsole();
 	system("color b0");
-	system("title  Í¼ÏñÈÚºÏÏµÍ³Êä³ö´°¿Ú");
+	system("title  å›¾åƒèåˆç³»ç»Ÿè¾“å‡ºçª—å£");
 	nRet = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
 	fp = _fdopen(nRet, "w");
 	*stdout = *fp;
@@ -32,35 +40,35 @@ string wstring2string(const wstring &wstr)
 {
 	string result;
 
-	//»ñÈ¡»º³åÇø´óĞ¡£¬²¢ÉêÇë¿Õ¼ä£¬»º³åÇø´óĞ¡ÊÂ°´×Ö½Ú¼ÆËãµÄ  
+	//è·å–ç¼“å†²åŒºå¤§å°ï¼Œå¹¶ç”³è¯·ç©ºé—´ï¼Œç¼“å†²åŒºå¤§å°äº‹æŒ‰å­—èŠ‚è®¡ç®—çš„  
 	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), int(wstr.size()), NULL, 0, NULL, NULL);
 	char* buffer = new char[len + 1];
 
-	//¿í×Ö½Ú±àÂë×ª»»³É¶à×Ö½Ú±àÂë  
+	//å®½å­—èŠ‚ç¼–ç è½¬æ¢æˆå¤šå­—èŠ‚ç¼–ç   
 	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), int(wstr.size()), buffer, len, NULL, NULL);
 	buffer[len] = '\0';
 
-	//É¾³ı»º³åÇø²¢·µ»ØÖµ  
+	//åˆ é™¤ç¼“å†²åŒºå¹¶è¿”å›å€¼  
 	result.append(buffer);
 	delete[] buffer;
 
 	return result;
 }
 
-// ÓÃÓÚÓ¦ÓÃ³ÌĞò¡°¹ØÓÚ¡±²Ëµ¥ÏîµÄ CAboutDlg ¶Ô»°¿ò
+// ç”¨äºåº”ç”¨ç¨‹åºâ€œå…³äºâ€èœå•é¡¹çš„ CAboutDlg å¯¹è¯æ¡†
 
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
 
-// ¶Ô»°¿òÊı¾İ
+// å¯¹è¯æ¡†æ•°æ®
 	enum { IDD = IDD_ABOUTBOX };
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-// ÊµÏÖ
+// å®ç°
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -78,7 +86,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CMFC_ImageFuseDlg ¶Ô»°¿ò
+// CMFC_ImageFuseDlg å¯¹è¯æ¡†
 
 
 
@@ -111,7 +119,7 @@ BEGIN_MESSAGE_MAP(CMFC_ImageFuseDlg, CDialogEx)
 	ON_BN_CLICKED(ID_EXIT, &CMFC_ImageFuseDlg::OnBnClickedExit)
 END_MESSAGE_MAP()
 
-//»­Í¼µ½pic¿Ø¼ş
+//ç”»å›¾åˆ°picæ§ä»¶
 void CMFC_ImageFuseDlg::DrawPicToHDC(IplImage *img, UINT ID)
 {
 	CDC *pDC = GetDlgItem(ID)->GetDC();
@@ -119,20 +127,20 @@ void CMFC_ImageFuseDlg::DrawPicToHDC(IplImage *img, UINT ID)
 	CRect rect;
 	GetDlgItem(ID)->GetClientRect(&rect);
 	CvvImage cimg;
-	cimg.CopyOf(img); // ¸´ÖÆÍ¼Æ¬  
-	cimg.DrawToHDC(hDC, &rect); // ½«Í¼Æ¬»æÖÆµ½ÏÔÊ¾¿Ø¼şµÄÖ¸¶¨ÇøÓòÄÚ  
+	cimg.CopyOf(img); // å¤åˆ¶å›¾ç‰‡  
+	cimg.DrawToHDC(hDC, &rect); // å°†å›¾ç‰‡ç»˜åˆ¶åˆ°æ˜¾ç¤ºæ§ä»¶çš„æŒ‡å®šåŒºåŸŸå†…  
 	ReleaseDC(pDC);
 }
 
-// CMFC_ImageFuseDlg ÏûÏ¢´¦Àí³ÌĞò
+// CMFC_ImageFuseDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 BOOL CMFC_ImageFuseDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// ½«¡°¹ØÓÚ...¡±²Ëµ¥ÏîÌí¼Óµ½ÏµÍ³²Ëµ¥ÖĞ¡£
+	// å°†â€œå…³äº...â€èœå•é¡¹æ·»åŠ åˆ°ç³»ç»Ÿèœå•ä¸­ã€‚
 
-	// IDM_ABOUTBOX ±ØĞëÔÚÏµÍ³ÃüÁî·¶Î§ÄÚ¡£
+	// IDM_ABOUTBOX å¿…é¡»åœ¨ç³»ç»Ÿå‘½ä»¤èŒƒå›´å†…ã€‚
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -150,26 +158,26 @@ BOOL CMFC_ImageFuseDlg::OnInitDialog()
 		}
 	}
 
-	// ÉèÖÃ´Ë¶Ô»°¿òµÄÍ¼±ê¡£  µ±Ó¦ÓÃ³ÌĞòÖ÷´°¿Ú²»ÊÇ¶Ô»°¿òÊ±£¬¿ò¼Ü½«×Ô¶¯
-	//  Ö´ĞĞ´Ë²Ù×÷
-	SetIcon(m_hIcon, TRUE);			// ÉèÖÃ´óÍ¼±ê
-	SetIcon(m_hIcon, FALSE);		// ÉèÖÃĞ¡Í¼±ê
+	// è®¾ç½®æ­¤å¯¹è¯æ¡†çš„å›¾æ ‡ã€‚  å½“åº”ç”¨ç¨‹åºä¸»çª—å£ä¸æ˜¯å¯¹è¯æ¡†æ—¶ï¼Œæ¡†æ¶å°†è‡ªåŠ¨
+	//  æ‰§è¡Œæ­¤æ“ä½œ
+	SetIcon(m_hIcon, TRUE);			// è®¾ç½®å¤§å›¾æ ‡
+	SetIcon(m_hIcon, FALSE);		// è®¾ç½®å°å›¾æ ‡
 	InitConsole();
-	// Îª ×éºÏ¿ò¿Ø¼şµÄÁĞ±í¿òÌí¼ÓÁĞ±íÏî:  
-	m_combo.AddString(_T("À­ÆÕÀ­Ë¹lap"));
-	m_combo.AddString(_T("¶Ô±È¶È"));
-	m_combo.AddString(_T("±ÈÂÊ"));
-	m_combo.AddString(_T("Ğ¡²¨sidwt"));
-	m_combo.AddString(_T("Ğ¡²¨"));
-	m_combo.AddString(_T("fsd½ğ×ÖËş"));
-	m_combo.AddString(_T("graÌİ¶È"));
-	m_combo.AddString(_T("pcaÖ÷³É·Ö"));
-	m_combo.AddString(_T("aveÆ½¾ù"));
-	m_combo.SetCurSel(0);			//Ä¬ÈÏÑ¡ÔñÔ­Í¼
+	// ä¸º ç»„åˆæ¡†æ§ä»¶çš„åˆ—è¡¨æ¡†æ·»åŠ åˆ—è¡¨é¡¹:  
+	m_combo.AddString(_T("æ‹‰æ™®æ‹‰æ–¯lap"));
+	m_combo.AddString(_T("å¯¹æ¯”åº¦"));
+	m_combo.AddString(_T("æ¯”ç‡"));
+	m_combo.AddString(_T("å°æ³¢sidwt"));
+	m_combo.AddString(_T("å°æ³¢"));
+	m_combo.AddString(_T("fsdé‡‘å­—å¡”"));
+	m_combo.AddString(_T("graæ¢¯åº¦"));
+	m_combo.AddString(_T("pcaä¸»æˆåˆ†"));
+	m_combo.AddString(_T("aveå¹³å‡"));
+	m_combo.SetCurSel(0);			//é»˜è®¤é€‰æ‹©åŸå›¾
 
-	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–ä»£ç 
 
-	return TRUE;  // ³ı·Ç½«½¹µãÉèÖÃµ½¿Ø¼ş£¬·ñÔò·µ»Ø TRUE
+	return TRUE;  // é™¤éå°†ç„¦ç‚¹è®¾ç½®åˆ°æ§ä»¶ï¼Œå¦åˆ™è¿”å› TRUE
 }
 
 void CMFC_ImageFuseDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -185,19 +193,19 @@ void CMFC_ImageFuseDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// Èç¹ûÏò¶Ô»°¿òÌí¼Ó×îĞ¡»¯°´Å¥£¬ÔòĞèÒªÏÂÃæµÄ´úÂë
-//  À´»æÖÆ¸ÃÍ¼±ê¡£  ¶ÔÓÚÊ¹ÓÃÎÄµµ/ÊÓÍ¼Ä£ĞÍµÄ MFC Ó¦ÓÃ³ÌĞò£¬
-//  Õâ½«ÓÉ¿ò¼Ü×Ô¶¯Íê³É¡£
+// å¦‚æœå‘å¯¹è¯æ¡†æ·»åŠ æœ€å°åŒ–æŒ‰é’®ï¼Œåˆ™éœ€è¦ä¸‹é¢çš„ä»£ç 
+//  æ¥ç»˜åˆ¶è¯¥å›¾æ ‡ã€‚  å¯¹äºä½¿ç”¨æ–‡æ¡£/è§†å›¾æ¨¡å‹çš„ MFC åº”ç”¨ç¨‹åºï¼Œ
+//  è¿™å°†ç”±æ¡†æ¶è‡ªåŠ¨å®Œæˆã€‚
 
 void CMFC_ImageFuseDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
+		CPaintDC dc(this); // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// Ê¹Í¼±êÔÚ¹¤×÷Çø¾ØĞÎÖĞ¾ÓÖĞ
+		// ä½¿å›¾æ ‡åœ¨å·¥ä½œåŒºçŸ©å½¢ä¸­å±…ä¸­
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -205,7 +213,7 @@ void CMFC_ImageFuseDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// »æÖÆÍ¼±ê
+		// ç»˜åˆ¶å›¾æ ‡
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -214,8 +222,8 @@ void CMFC_ImageFuseDlg::OnPaint()
 	}
 }
 
-//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±ê
-//ÏÔÊ¾¡£
+//å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡
+//æ˜¾ç¤ºã€‚
 HCURSOR CMFC_ImageFuseDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -226,10 +234,10 @@ HCURSOR CMFC_ImageFuseDlg::OnQueryDragIcon()
 
 void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect1()
 {
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	TCHAR defaultpath[] = TEXT(".\\test_image\\");
 	CFileDialog dlg(TRUE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("(*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp|(All files)|*.*"));
-	dlg.m_ofn.lpstrTitle = _T("ÇëºìÍâÍ¼Ïñ");
+	dlg.m_ofn.lpstrTitle = _T("è¯·çº¢å¤–å›¾åƒ");
 	dlg.m_ofn.lpstrInitialDir = defaultpath;
 	if (dlg.DoModal() != IDOK)
 	{
@@ -237,8 +245,8 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect1()
 	}
 	m_filepath1 = dlg.GetPathName();
 	SetDlgItemText(IDC_EDIT_PATH1, m_filepath1);
-	IplImage *image1 = cvLoadImage(wstring2string(m_filepath1.GetBuffer(0)).c_str(), 0); //ÏÔÊ¾»Ò¶ÈÍ¼Æ¬  
-	Mat infr = Mat(image1, 1);	//1±íÊ¾¸´ÖÆÊı¾İ£¬0±íÊ¾²»¸´ÖÆÊı¾İ
+	IplImage *image1 = cvLoadImage(wstring2string(m_filepath1.GetBuffer(0)).c_str(), 0); //æ˜¾ç¤ºç°åº¦å›¾ç‰‡  
+	Mat infr = Mat(image1, 1);	//1è¡¨ç¤ºå¤åˆ¶æ•°æ®ï¼Œ0è¡¨ç¤ºä¸å¤åˆ¶æ•°æ®
 	infr.convertTo(fir, CV_32FC1, 1 / 255.0);// 
 	DrawPicToHDC(image1, IDC_STATIC_IR);
 }
@@ -246,10 +254,10 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect1()
 
 void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect2()
 {
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	TCHAR defaultpath[] = TEXT(".\\test_image\\");
 	CFileDialog dlg(TRUE, _T("jpg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("(*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp||"));
-	dlg.m_ofn.lpstrTitle = _T("Çë¿É¼û¹âÍ¼Ïñ");
+	dlg.m_ofn.lpstrTitle = _T("è¯·å¯è§å…‰å›¾åƒ");
 	dlg.m_ofn.lpstrInitialDir = defaultpath;
 	if (dlg.DoModal() != IDOK)
 	{
@@ -257,7 +265,7 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect2()
 	}
 	m_filepath2 = dlg.GetPathName();
 	SetDlgItemText(IDC_EDIT_PATH2, m_filepath2);
-	IplImage *image2 = cvLoadImage(wstring2string(m_filepath2.GetBuffer(0)).c_str(), 0); //ÏÔÊ¾»Ò¶ÈÍ¼Æ¬ 
+	IplImage *image2 = cvLoadImage(wstring2string(m_filepath2.GetBuffer(0)).c_str(), 0); //æ˜¾ç¤ºç°åº¦å›¾ç‰‡ 
 	Mat visi = Mat(image2, 1);
 	visi.convertTo(fvs, CV_32FC1, 1 / 255.0);
 	DrawPicToHDC(image2, IDC_STATIC_VS);
@@ -266,7 +274,7 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonSelect2()
 
 void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonFuse()
 {
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	UpdateData(true);
 	ImageFuse imagefuse(fir, fvs, m_level, 3);
 	int64 tin = cv::getTickCount();
@@ -302,7 +310,7 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonFuse()
 	default:
 		break;
 	}
-	std::cout << "ÓÃÊ±£º" << 1000.0*(getTickCount()-tin)/getTickFrequency() << endl;
+	std::cout << "ç”¨æ—¶ï¼š" << 1000.0*(getTickCount()-tin)/getTickFrequency() << endl;
 	IplImage *image = &(IplImage)fuse;
 	DrawPicToHDC(image, IDC_STATIC_FUSE);
 }
@@ -312,7 +320,7 @@ void CMFC_ImageFuseDlg::OnBnClickedMfcbuttonFuse()
 
 void CMFC_ImageFuseDlg::OnBnClickedExit()
 {
-	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 	CDialog::OnDestroy();
 	FreeConsole();
 	CDialogEx::OnOK();
